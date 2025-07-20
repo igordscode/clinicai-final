@@ -25,7 +25,6 @@ export default function Dashboard() {
   const [simulatedHour, setSimulatedHour] = useState<number | null>(null);
   const robotRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Função para obter saudação baseada no horário
   const getGreeting = () => {
@@ -142,19 +141,17 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="font-sans antialiased bg-background flex w-full">
-      {/* Sidebar Fixa/Drawer */}
+    <div className="font-sans antialiased h-screen bg-background flex">
+      {/* Sidebar Fixa */}
       <Sidebar 
         userName="Camila" 
         isCollapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
       />
       {/* Main Content */}
-      <div className="flex flex-col flex-1 w-full">
+      <div className="flex flex-col flex-1 h-screen">
         {/* Header */}
-        <Header userName="Camila" notifications={3} onMenuClick={() => setSidebarOpen(true)} />
+        <Header userName="Camila" notifications={3} />
         {/* Main Area com scroll independente */}
         <main className="flex-1 px-4 md:px-6 lg:px-8 py-4 md:py-6 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900/30 overflow-y-auto scrollbar-thin">
           
@@ -293,7 +290,7 @@ export default function Dashboard() {
                     <div className="absolute top-1 md:top-2 left-1 md:left-2 w-2 md:w-3 h-2 md:h-3 bg-white/40 rounded-full blur-sm"></div>
                   </div>
                   <div>
-                    <h1 className="text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent mb-1 flex items-center gap-2">
+                    <h1 className="text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent mb-1 flex items-center gap-2">
                       <span>{getGreeting()}, Camila</span>
                       <span className="text-base md:text-xl lg:text-2xl animate-pulse">{getTimeIcon()}</span>
                     </h1>
@@ -350,8 +347,7 @@ export default function Dashboard() {
               </div>
 
               {/* Middle Row - Status Indicators */}
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                {/* Clínica Operacional */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1.5 md:gap-2 mb-3">
                 <div className="flex items-center gap-2 p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700/50">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                   <div>
@@ -359,7 +355,6 @@ export default function Dashboard() {
                     <div className="text-xs text-emerald-600 dark:text-emerald-400">99.9% uptime</div>
                   </div>
                 </div>
-                {/* Horário */}
                 <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
                   <svg className="w-3 h-3 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -369,9 +364,6 @@ export default function Dashboard() {
                     <div className="text-xs text-blue-600 dark:text-blue-400">hace 2 min</div>
                   </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                {/* Última Actualización */}
                 <div className="flex items-center gap-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-700/50">
                   <div className="w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
                     <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
@@ -381,7 +373,6 @@ export default function Dashboard() {
                     <div className="text-xs text-purple-600 dark:text-purple-400">Horario normal</div>
                   </div>
                 </div>
-                {/* Horário */}
                 <div className="flex items-center gap-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-700/50">
                   <svg className="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -394,7 +385,7 @@ export default function Dashboard() {
               </div>
 
               {/* Bottom Row - Main Content Grid - REORGANIZADO */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 md:gap-3">
                 {/* Left - Próximas Citas (PROMOVIDA para posição principal) */}
                 <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-700/50 rounded-lg p-2 md:p-3 relative overflow-hidden h-full flex flex-col">
                   <div className="relative z-10 flex flex-col h-full">
@@ -466,26 +457,42 @@ export default function Dashboard() {
                 {/* Center - Métricas e Finanças Agrupadas */}
                 <div className="space-y-2 md:space-y-3">
                   {/* KPIs Principais - VERSÃO ULTRA COMPACTA */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-2">
+                  <div className="grid grid-cols-3 gap-1.5 md:gap-2">
                     {/* Citas Hoy */}
-                    <div className="flex gap-4 overflow-x-auto pb-2 mb-4">
-  <div className="min-w-[140px] bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
-    <div className="text-emerald-700 font-bold text-xl">6</div>
-    <div className="text-xs text-emerald-600">Citas Hoy</div>
-  </div>
+                    <div className="group relative bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-emerald-600/10 dark:from-emerald-400/20 dark:via-emerald-500/10 dark:to-emerald-600/20 border border-emerald-200/50 dark:border-emerald-500/30 rounded-lg p-1.5 md:p-2 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="relative z-10">
+                        <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform duration-300">
+                          <CalendarPlus className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
+                        </div>
+                        <div className="text-base md:text-lg font-bold text-emerald-700 dark:text-emerald-300 mb-0.5">6</div>
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Citas Hoy</div>
+                      </div>
+                    </div>
 
                     {/* En Espera */}
-                    <div className="min-w-[140px] bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
-    <div className="text-amber-700 font-bold text-xl">8</div>
-    <div className="text-xs text-amber-600">En Espera</div>
-  </div>
+                    <div className="group relative bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-amber-600/10 dark:from-amber-400/20 dark:via-amber-500/10 dark:to-amber-600/20 border border-amber-200/50 dark:border-amber-500/30 rounded-lg p-1.5 md:p-2 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="relative z-10">
+                        <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform duration-300">
+                          <Clock className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
+                        </div>
+                        <div className="text-base md:text-lg font-bold text-amber-700 dark:text-amber-300 mb-0.5">8</div>
+                        <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">En Espera</div>
+                      </div>
+                    </div>
 
                     {/* Urgencias */}
-                    <div className="min-w-[140px] bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-    <div className="text-red-700 font-bold text-xl">2</div>
-    <div className="text-xs text-red-600">Urgencias</div>
-  </div>
-</div>
+                    <div className="group relative bg-gradient-to-br from-red-500/10 via-red-400/5 to-red-600/10 dark:from-red-400/20 dark:via-red-500/10 dark:to-red-600/20 border border-red-200/50 dark:border-red-500/30 rounded-lg p-1.5 md:p-2 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="relative z-10">
+                        <div className="w-5 h-5 md:w-6 md:h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-1 group-hover:scale-110 transition-transform duration-300">
+                          <AlertTriangle className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" />
+                        </div>
+                        <div className="text-base md:text-lg font-bold text-red-700 dark:text-red-300 mb-0.5">2</div>
+                        <div className="text-xs text-red-600 dark:text-red-400 font-medium">Urgencias</div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Finanzas del Día */}
@@ -1471,6 +1478,26 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </section>
+                  {/* Performance Financeira Diária */}
+                  <div className="bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-lg p-3 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                          </svg>
+                          Finanzas del Día
+                        </span>
+                        <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Hasta ahora</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400">• Facturado: <span className="font-semibold">Gs. 2.4M</span></div>
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400">• Cobrado: <span className="font-semibold">Gs. 1.8M</span></div>
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400">• Pendiente: <span className="font-semibold">Gs. 600K</span></div>
+                      </div>
+                    </div>
+                  </div>
         </main> 
       </div>
     </div>

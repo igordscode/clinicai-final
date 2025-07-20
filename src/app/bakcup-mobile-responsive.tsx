@@ -1,4 +1,4 @@
-  "use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Sidebar } from "../components/Sidebar";
@@ -469,23 +469,19 @@ export default function Dashboard() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-2">
                     {/* Citas Hoy */}
                     <div className="flex gap-4 overflow-x-auto pb-2 mb-4">
-  <div className="min-w-[140px] bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
-    <div className="text-emerald-700 font-bold text-xl">6</div>
-    <div className="text-xs text-emerald-600">Citas Hoy</div>
-  </div>
-
-                    {/* En Espera */}
-                    <div className="min-w-[140px] bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
-    <div className="text-amber-700 font-bold text-xl">8</div>
-    <div className="text-xs text-amber-600">En Espera</div>
-  </div>
-
-                    {/* Urgencias */}
-                    <div className="min-w-[140px] bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-    <div className="text-red-700 font-bold text-xl">2</div>
-    <div className="text-xs text-red-600">Urgencias</div>
-  </div>
-</div>
+                      <div className="min-w-[140px] bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-lg p-3 text-center">
+                        <div className="text-emerald-700 dark:text-emerald-300 font-bold text-xl">6</div>
+                        <div className="text-xs text-emerald-600 dark:text-emerald-400">Citas Hoy</div>
+                      </div>
+                      <div className="min-w-[140px] bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3 text-center">
+                        <div className="text-amber-700 dark:text-amber-300 font-bold text-xl">8</div>
+                        <div className="text-xs text-amber-600 dark:text-amber-400">En Espera</div>
+                      </div>
+                      <div className="min-w-[140px] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-3 text-center">
+                        <div className="text-red-700 dark:text-red-300 font-bold text-xl">2</div>
+                        <div className="text-xs text-red-600 dark:text-red-400">Urgencias</div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Finanzas del Día */}
@@ -566,6 +562,31 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
+                  {/* Ocupación Clínica */}
+                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg p-2 md:p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs md:text-sm font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                        <Building2 className="w-3 h-3 md:w-4 md:h-4" />
+                        Ocupación Clínica
+                      </span>
+                      <span className="text-xs text-purple-600 dark:text-purple-400 font-medium bg-purple-100 dark:bg-purple-800/50 px-1.5 py-0.5 rounded-full">Estado actual</span>
+                    </div>
+                    
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-purple-600 dark:text-purple-400">85% Ocupado</span>
+                      </div>
+                      
+                      <div className="w-full bg-purple-200 dark:bg-purple-800/50 rounded-full h-2">
+                        <div className="bg-purple-500 h-2 rounded-full" style={{width: '85%'}}></div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-purple-600 dark:text-purple-400">17 Ocupados</span>
+                        <span className="text-purple-600 dark:text-purple-400">3 Disponibles</span>
+                      </div>
+                    </div>
+                  </div>
 
                 {/* Right - Ações Rápidas e Ocupação */}
                 <div className="space-y-2 md:space-y-3">
@@ -654,31 +675,6 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Ocupación Clínica */}
-                  <div className="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg p-2 md:p-3">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs md:text-sm font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
-                        <Building2 className="w-3 h-3 md:w-4 md:h-4" />
-                        Ocupación Clínica
-                      </span>
-                      <span className="text-xs text-purple-600 dark:text-purple-400 font-medium bg-purple-100 dark:bg-purple-800/50 px-1.5 py-0.5 rounded-full">Estado actual</span>
-                    </div>
-                    
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-purple-600 dark:text-purple-400">85% Ocupado</span>
-                      </div>
-                      
-                      <div className="w-full bg-purple-200 dark:bg-purple-800/50 rounded-full h-2">
-                        <div className="bg-purple-500 h-2 rounded-full" style={{width: '85%'}}></div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="text-purple-600 dark:text-purple-400">17 Ocupados</span>
-                        <span className="text-purple-600 dark:text-purple-400">3 Disponibles</span>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

@@ -1,26 +1,795 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 216 34% 17%;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Garantir que o dark mode funcione corretamente */
+  html.dark {
+    color-scheme: dark;
+  }
+  
+  html.light {
+    color-scheme: light;
+  }
+  
+  /* Melhorar renderização de bordas no Windows */
+  .rounded-xl, .rounded-2xl, .rounded-lg, .rounded-md, .rounded-sm {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+  
+  /* Suavizar bordas com sombras */
+  .shadow-lg, .shadow-xl, .shadow-md, .shadow-sm {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Forçar renderização limpa de cards */
+  .bg-white {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Remover artefatos de backdrop-blur */
+  .backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+  
+  /* Forçar renderização limpa de bordas arredondadas */
+  .rounded-2xl {
+    border-radius: 1rem !important;
+    -webkit-border-radius: 1rem !important;
+    overflow: hidden;
+  }
+  
+  .rounded-xl {
+    border-radius: 0.75rem !important;
+    -webkit-border-radius: 0.75rem !important;
+    overflow: hidden;
+  }
+  
+  /* Sombra consistente para todos os cards */
+  .shadow-xl {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  .shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+  
+  .shadow-3xl {
+    box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .shadow-4xl {
+    box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  /* Efeitos 3D para ícones */
+  .drop-shadow-lg {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  }
+  
+  /* Animação 3D suave */
+  .transform {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Efeito de profundidade */
+  .bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+  }
+  
+  /* Animações personalizadas para o robô por horário */
+  @keyframes robot-wave {
+    0%, 100% { transform: rotate(12deg) translateY(0); }
+    25% { transform: rotate(15deg) translateY(-2px); }
+    50% { transform: rotate(12deg) translateY(-1px); }
+    75% { transform: rotate(9deg) translateY(-2px); }
+  }
+  
+  @keyframes robot-eat {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(2deg); }
+    50% { transform: scale(1.05) rotate(-1deg); }
+    75% { transform: scale(1.1) rotate(1deg); }
+  }
+  
+  @keyframes robot-work {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-1px) rotate(1deg); }
+    50% { transform: translateY(-2px) rotate(0deg); }
+    75% { transform: translateY(-1px) rotate(-1deg); }
+  }
+  
+  @keyframes robot-bye {
+    0%, 100% { transform: rotate(12deg) translateY(0); }
+    25% { transform: rotate(15deg) translateY(-3px); }
+    50% { transform: rotate(12deg) translateY(-1px); }
+    75% { transform: rotate(9deg) translateY(-2px); }
+  }
+  
+  @keyframes robot-sleep {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(0.95) translateY(1px); }
+  }
+  
+  .animate-robot-wave {
+    animation: robot-wave 2s infinite;
+  }
+  
+  .animate-robot-eat {
+    animation: robot-eat 1.5s infinite;
+  }
+  
+  .animate-robot-work {
+    animation: robot-work 2.5s infinite;
+  }
+  
+  .animate-robot-bye {
+    animation: robot-bye 1.8s infinite;
+  }
+  
+  .animate-robot-sleep {
+    animation: robot-sleep 3s infinite;
+  }
+  
+  /* Animações para acessórios */
+  @keyframes hat-bounce {
+    0%, 100% { transform: rotate(-6deg) translateY(0); }
+    50% { transform: rotate(-6deg) translateY(-1px); }
+  }
+  
+  @keyframes glasses-glow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  
+  @keyframes tie-swing {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(1px) rotate(2deg); }
+  }
+  
+  .animate-hat-bounce {
+    animation: hat-bounce 2s infinite;
+  }
+  
+  .animate-glasses-glow {
+    animation: glasses-glow 3s infinite;
+  }
+  
+  .animate-tie-swing {
+    animation: tie-swing 2.5s infinite;
+  }
+  
+  /* Animação mais sutil - apenas no hover */
+  @keyframes robot-wave-subtle {
+    0%, 100% { transform: rotate(12deg) translateY(0); }
+    50% { transform: rotate(12deg) translateY(-0.5px); }
+  }
+  
+  .robot-arm-subtle {
+    animation: robot-wave-subtle 2s infinite;
+  }
+  
+  /* Animação apenas no hover */
+  .robot-container:hover .robot-arm-hover {
+    animation: robot-wave 1s infinite;
+  }
+  
+  /* Animação dos sensores do robô */
+  @keyframes sensor-pulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  
+  .animate-pulse {
+    animation: sensor-pulse 2s infinite;
+  }
+  
+  /* Efeito de tela do robô */
+  @keyframes screen-glow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  
+  .bg-blue-500 {
+    animation: screen-glow 3s infinite;
+  }
+  
+  /* Sombra interna para profundidade */
+  .shadow-inner {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Animação dos olhos do robô */
+  .robot-eye {
+    will-change: transform;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Container do robô */
+  .robot-container {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .robot-container:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Animação de aceno único quando espreita */
+  @keyframes wave-once {
+    0% { transform: rotate(12deg) translateY(0) scale(1); }
+    25% { transform: rotate(25deg) translateY(-3px) scale(1.1); }
+    50% { transform: rotate(15deg) translateY(-2px) scale(1.05); }
+    75% { transform: rotate(30deg) translateY(-4px) scale(1.1); }
+    100% { transform: rotate(12deg) translateY(0) scale(1); }
+  }
+  
+  .animate-wave-once {
+    animation: wave-once 1.5s ease-in-out;
+  }
+
+  /* Animações para Toast */
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-out {
+    animation: slideOut 0.5s ease-in forwards;
+  }
+
+  /* Animação de progresso para Toast */
+  @keyframes progress {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+
+  .animate-progress {
+    animation: progress 5s linear forwards;
+  }
+
+  /* Animações de entrada mais elaboradas */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-left {
+    animation: fadeInLeft 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-right {
+    animation: fadeInRight 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  /* Glassmorphism avançado */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .glass-card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Efeitos de hover mais sofisticados */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .hover-lift:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Animações de loading mais suaves */
+  @keyframes shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .dark .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+
+  /* Efeitos 3D para botões - Otimizados para performance */
+  .button-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .button-3d:hover {
+    transform: translateY(-2px) rotateX(5deg);
+  }
+
+  /* Sombra 3D dinâmica */
+  .shadow-3d {
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  }
+
+  .shadow-3d:hover {
+    box-shadow: 
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05),
+      0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+  }
+
+  /* Animações para KPI Cards */
+  @keyframes kpi-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+  }
+
+  .kpi-card-float {
+    animation: kpi-float 3s ease-in-out infinite;
+  }
+
+  .kpi-card-float:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  .kpi-card-float:nth-child(3) {
+    animation-delay: 1s;
+  }
+
+  .kpi-card-float:nth-child(4) {
+    animation-delay: 1.5s;
+  }
+
+  /* Efeito de entrada para KPI Cards */
+  @keyframes kpi-entrance {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .kpi-entrance {
+    animation: kpi-entrance 0.6s ease-out forwards;
+  }
+  
+  /* Efeito de espreitar */
+  .robot-peeking {
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Animação de entrada dramática */
+  @keyframes robot-entrance {
+    0% { 
+      transform: scale(0.5) translateY(0) rotate(-10deg);
+      opacity: 0;
+    }
+    50% { 
+      transform: scale(1.2) translateY(-6px) rotate(5deg);
+      opacity: 0.8;
+    }
+    100% { 
+      transform: scale(1.5) translateY(-4px) rotate(0deg);
+      opacity: 1;
+    }
+  }
+  
+  .robot-entrance {
+    animation: robot-entrance 1s ease-out;
+  }
+  
+  /* Efeito de brilho no painel AI */
+  @keyframes ai-glow {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  
+  .bg-blue-500 {
+    animation: ai-glow 2s infinite;
+  }
+
+  /* Animações para Indicadores Clave Premium */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) skewX(-12deg); }
+    100% { transform: translateX(200%) skewX(-12deg); }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* Efeito de brilho para ícones 3D */
+  @keyframes icon-glow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+  }
+
+  .icon-glow {
+    animation: icon-glow 3s ease-in-out infinite;
+  }
+
+  /* Animação de entrada para títulos dos grupos */
+  @keyframes title-entrance {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-entrance {
+    animation: title-entrance 0.6s ease-out forwards;
+  }
+
+  /* Efeito de hover para containers 3D */
+  .container-3d {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .container-3d:hover {
+    transform: scale(1.05) rotateY(2deg);
+    box-shadow: 
+      0 20px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04),
+      0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  }
+
+  /* Animações para KPI Cards Modernizados */
+  @keyframes card-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-1px); }
+  }
+
+  .kpi-card-modern {
+    animation: card-float 6s ease-in-out infinite;
+  }
+
+  .kpi-card-modern:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .kpi-card-modern:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  .kpi-card-modern:nth-child(3) {
+    animation-delay: 1s;
+  }
+
+  .kpi-card-modern:nth-child(4) {
+    animation-delay: 1.5s;
+  }
+
+  /* Efeito de entrada para cards */
+  @keyframes card-entrance {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .card-entrance {
+    animation: card-entrance 0.6s ease-out forwards;
+  }
+
+  /* Efeito de brilho para cards */
+  @keyframes card-shimmer {
+    0% { transform: translateX(-100%) skewX(-12deg); }
+    100% { transform: translateX(200%) skewX(-12deg); }
+  }
+
+  .card-shimmer {
+    animation: card-shimmer 2s infinite;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Animações personalizadas para o robô */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+@keyframes slow-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes wave-once {
+  0% { transform: rotate(12deg); }
+  25% { transform: rotate(25deg); }
+  50% { transform: rotate(12deg); }
+  75% { transform: rotate(25deg); }
+  100% { transform: rotate(12deg); }
+}
+
+@keyframes robot-arm-subtle {
+  0%, 100% { transform: rotate(12deg); }
+  50% { transform: rotate(15deg); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+
+/* Classes de animação */
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+.animate-gentle-bounce {
+  animation: gentle-bounce 2s ease-in-out infinite;
+}
+
+.animate-slow-pulse {
+  animation: slow-pulse 3s ease-in-out infinite;
+}
+
+.animate-wave-once {
+  animation: wave-once 0.5s ease-in-out;
+}
+
+.robot-arm-subtle {
+  animation: robot-arm-subtle 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* Efeitos 3D */
+.container-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.icon-glow {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+/* Animações de entrada dos cards */
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-entrance {
+  animation: card-entrance 0.6s ease-out forwards;
+}
+
+/* Cards KPI modernos */
+.kpi-card-modern {
+  @apply relative overflow-hidden rounded-2xl border bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl;
+}
+
+.kpi-card-modern::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 opacity-0 transition-opacity duration-500;
+}
+
+.kpi-card-modern:hover::before {
+  @apply opacity-100;
+}
+
+/* Scrollbar personalizada */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
 }
