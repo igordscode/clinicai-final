@@ -1,3 +1,5 @@
+"use client";
+
 interface SidebarProps {
   userName?: string;
   isCollapsed?: boolean;
@@ -5,6 +7,11 @@ interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
 }
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { Calendar, Cog } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, isOpen = false, onClose }: SidebarProps) => {
   // Mobile drawer classes
@@ -14,6 +21,19 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
   const mobileSidebar = isOpen
     ? 'translate-x-0'
     : '-translate-x-full';
+
+  // Adiciona estado para expandir/colapsar o menu CRM e Dashboard
+  const [crmOpen, setCrmOpen] = useState(false);
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+
+  const pathname = usePathname();
+
+  const handleToggle = () => {
+    setCrmOpen(false);
+    setDashboardOpen(false);
+    if (onToggle) onToggle();
+  };
+
   return (
     <>
       {/* Mobile Drawer */}
@@ -42,53 +62,148 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
             </div>
           </div>
           {/* Navigation (reaproveitar o mesmo nav) */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto h-full max-h-screen">
             <div className="space-y-1">
               <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3">Principal</h3>
-              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02]">
-                <div className="w-5 h-5 flex items-center justify-center">
+              {/* Inicio */}
+              {(() => {
+                const isActive = pathname === '/' || pathname === '/Inicio';
+                return (
+                  <Link
+                    href="/"
+                    className={`group relative flex items-center h-12 w-full ${isActive ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                    aria-label="Inicio"
+                    style={{ overflow: "visible" }}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" />
+                    </svg>
+                    {!isCollapsed && (
+                      <span className={`ml-4 font-medium text-base ${isActive ? 'text-white' : 'text-slate-700 dark:text-white'}`}>Inicio</span>
+                    )}
+                    {isCollapsed && (
+                      <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">
+                        Inicio
+                      </span>
+                    )}
+                  </Link>
+                );
+              })()}
+              {/* Agenda */}
+              <Link
+                href="/Agenda"
+                className={`group relative flex items-center h-12 w-full ${pathname === '/Agenda' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                aria-label="Agenda"
+              >
+                <Calendar className="w-5 h-5" />
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Agenda</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Agenda</span>}
+              </Link>
+              {/* Chat */}
+              <Link href="/Chat" className={`group relative flex items-center h-12 w-full ${pathname === '/Chat' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Chat">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 15a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v8z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 21h-6a2 2 0 01-2-2v-1a2 2 0 012-2h6a2 2 0 012 2v1a2 2 0 01-2 2z" />
+                </svg>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Chat</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Chat</span>}
+              </Link>
+              {/* CRM - Menu expansível */}
+              <div>
+                <button
+                  type="button"
+                  className={`group relative flex items-center h-12 w-full font-medium transition-all duration-200 ${pathname.startsWith('/CRM') ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                  onClick={() => setCrmOpen((open) => !open)}
+                  aria-expanded={crmOpen}
+                  aria-controls="crm-submenu"
+                  aria-label="CRM"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3l3 3V8l-3 3H4a1 1 0 01-1-1V7a1 1 0 011-1h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1v-2" />
+                  </svg>
+                  {!isCollapsed && <span className="ml-4 font-medium text-base">CRM</span>}
+                  {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">CRM</span>}
+                  {!isCollapsed && <svg className={`w-4 h-4 ml-auto transition-transform ${crmOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                {/* Submenu CRM */}
+                {crmOpen && (
+                  <div id="crm-submenu" className="ml-8 mt-1 flex flex-col gap-1">
+                    <Link href="/CRM/comercial" className={`block px-2 py-1 rounded ${pathname === '/CRM/comercial' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Comercial">Comercial</Link>
+                    <Link href="/CRM/pacientes" className={`block px-2 py-1 rounded ${pathname === '/CRM/pacientes' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Pacientes">Pacientes</Link>
+                    <Link href="/CRM/remarketing" className={`block px-2 py-1 rounded ${pathname === '/CRM/remarketing' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Remarketing">Remarketing</Link>
+                    <Link href="/CRM/feedback" className={`block px-2 py-1 rounded ${pathname === '/CRM/feedback' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Feedback">Feedback</Link>
+                    <Link href="/CRM/campanhas" className={`block px-2 py-1 rounded ${pathname === '/CRM/campanhas' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Campanhas">Campanhas</Link>
+                  </div>
+                )}
+              </div>
+              {/* Dashboard - Menu expansível */}
+              <div>
+                <button
+                  type="button"
+                  className={`group relative flex items-center h-12 w-full font-medium transition-all duration-200 ${pathname.startsWith('/Dashboard') ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                  onClick={() => setDashboardOpen((open) => !open)}
+                  aria-expanded={dashboardOpen}
+                  aria-controls="dashboard-submenu"
+                  aria-label="Dashboard"
+                >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
-                </div>
-                <span>Dashboard</span>
-              </a>
-              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md">
-                <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <span>Agenda</span>
-              </a>
-              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md">
-                <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                  </svg>
-                </div>
-                <span>Pacientes</span>
-              </a>
-              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md">
-                <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                </div>
-                <span>Leads</span>
-              </a>
-            </div>
-            <div className="space-y-1 pt-4">
-              <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3">Sistema</h3>
-              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md">
+                  {!isCollapsed && <span className="ml-4 font-medium text-base">Dashboard</span>}
+                  {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Dashboard</span>}
+                  {!isCollapsed && <svg className={`w-4 h-4 ml-auto transition-transform ${dashboardOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                {/* Submenu Dashboard */}
+                {dashboardOpen && (
+                  <div id="dashboard-submenu" className="ml-8 mt-1 flex flex-col gap-1">
+                    <Link href="/Dashboard/financeiro" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/financeiro' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Financeiro">Financeiro</Link>
+                    <Link href="/Dashboard/atencion" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/atencion' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Atención">Atención</Link>
+                    <Link href="/Dashboard/marketing" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/marketing' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Marketing">Marketing</Link>
+                    <Link href="/Dashboard/experiencia" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/experiencia' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Experiencia del Cliente">Experiencia del Cliente</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pacientes */}
+              <Link href="/Pacientes" className={`group relative flex items-center h-12 w-full ${pathname === '/Pacientes' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Pacientes">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                </svg>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Pacientes</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Pacientes</span>}
+              </Link>
+
+              {/* Doctores */}
+              <Link href="/Doctores" className={`group relative flex items-center h-12 w-full ${pathname === '/Doctores' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Doctores">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14c3.866 0 7-1.343 7-3V7a7 7 0 10-14 0v4c0 1.657 3.134 3 7 3zm0 0v4m-4 0h8" />
+                </svg>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Doctores</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Doctores</span>}
+              </Link>
+              <a href="#" className="group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md" aria-label="Configuraciones">
                 <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </div>
-                <span>Configurações</span>
+                <span className="ml-4 font-medium text-base text-slate-700 dark:text-white">Configuraciones</span>
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Configuraciones</span>}
               </a>
+            </div>
+            <div className="space-y-1 pt-4">
+              <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3">Sistema</h3>
+              {/* Configuraciones */}
+              <Link
+                href="/Configuraciones"
+                className={`group relative flex items-center h-12 w-full ${pathname === '/Configuraciones' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                aria-label="Configuraciones"
+              >
+                <Cog className="w-5 h-5" />
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Configuraciones</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Configuraciones</span>}
+              </Link>
             </div>
           </nav>
         </aside>
@@ -122,117 +237,159 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          <div className="space-y-1">
-            <h3 className={`text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3 transition-all duration-300 ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
-              Principal
-            </h3>
-            
-            {/* Dashboard - Active */}
-            <a href="#" className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] ${isCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-5 h-5 flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <span className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Dashboard</span>
-              <div className={`absolute right-3 w-2 h-2 bg-white rounded-full opacity-80 transition-all duration-300 ${isCollapsed ? 'opacity-0' : 'opacity-80'}`}></div>
+        {/* Navigation com rolagem independente */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll">
+          <nav className="px-4 py-6 space-y-2">
+            <div className="space-y-1">
+              <h3 className={`text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider px-3 mb-3 transition-all duration-300 ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
+                Principal
+              </h3>
               
-              {/* Etiqueta para sidebar retraída */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-blue-600 dark:bg-blue-500 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-blue-500 dark:border-blue-400 z-50">
-                  Dashboard
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-blue-600 dark:border-r-blue-500"></div>
-                </div>
-              )}
-            </a>
+              {/* Inicio */}
+              {(() => {
+                const isActive = pathname === '/' || pathname === '/Inicio';
+                return (
+                  <Link
+                    href="/"
+                    className={`group relative flex items-center h-12 w-full ${isActive ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                    style={{ overflow: "visible" }}
+                    aria-label="Inicio"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" />
+                    </svg>
+                    {!isCollapsed && (
+                      <span className={`ml-4 font-medium text-base ${isActive ? 'text-white' : 'text-slate-700 dark:text-white'}`}>Inicio</span>
+                    )}
+                    {isCollapsed && (
+                      <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">
+                        Inicio
+                      </span>
+                    )}
+                  </Link>
+                );
+              })()}
 
-            {/* Agenda */}
-            <a href="#" className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md ${isCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+              {/* Agenda */}
+              <Link
+                href="/Agenda"
+                className={`group relative flex items-center h-12 w-full ${pathname === '/Agenda' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                aria-label="Agenda"
+              >
+                <Calendar className="w-5 h-5" />
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Agenda</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Agenda</span>}
+              </Link>
+
+              {/* Chat */}
+              <Link href="/Chat" className={`group relative flex items-center h-12 w-full ${pathname === '/Chat' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Chat">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 15a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h12a2 2 0 012 2v8z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 21h-6a2 2 0 01-2-2v-1a2 2 0 012-2h6a2 2 0 012 2v1a2 2 0 01-2 2z" />
                 </svg>
-              </div>
-              <span className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Agenda</span>
-              
-              {/* Etiqueta para sidebar retraída */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-emerald-600 dark:bg-emerald-500 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-emerald-500 dark:border-emerald-400 z-50">
-                  Agenda
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-emerald-600 dark:border-r-emerald-500"></div>
-                </div>
-              )}
-            </a>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Chat</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Chat</span>}
+              </Link>
 
-            {/* Pacientes */}
-            <a href="#" className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md ${isCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+              {/* CRM - Menu expansível */}
+              <div>
+                <button
+                  type="button"
+                  className={`group relative flex items-center h-12 w-full font-medium transition-all duration-200 ${pathname.startsWith('/CRM') ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                  onClick={() => setCrmOpen((open) => !open)}
+                  aria-expanded={crmOpen}
+                  aria-controls="crm-submenu"
+                  aria-label="CRM"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3l3 3V8l-3 3H4a1 1 0 01-1-1V7a1 1 0 011-1h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1v-2" />
+                  </svg>
+                  {!isCollapsed && <span className="ml-4 font-medium text-base">CRM</span>}
+                  {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">CRM</span>}
+                  {!isCollapsed && <svg className={`w-4 h-4 ml-auto transition-transform ${crmOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                {/* Submenu CRM - bloco normal, não absoluto */}
+                {crmOpen && (
+                  <div id="crm-submenu" className="ml-8 mt-1 flex flex-col gap-1">
+                    <Link href="/CRM/comercial" className={`block px-2 py-1 rounded ${pathname === '/CRM/comercial' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Comercial">Comercial</Link>
+                    <Link href="/CRM/pacientes" className={`block px-2 py-1 rounded ${pathname === '/CRM/pacientes' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Pacientes">Pacientes</Link>
+                    <Link href="/CRM/remarketing" className={`block px-2 py-1 rounded ${pathname === '/CRM/remarketing' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Remarketing">Remarketing</Link>
+                    <Link href="/CRM/feedback" className={`block px-2 py-1 rounded ${pathname === '/CRM/feedback' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Feedback">Feedback</Link>
+                    <Link href="/CRM/campanhas" className={`block px-2 py-1 rounded ${pathname === '/CRM/campanhas' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Campanhas">Campanhas</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Dashboard - Menu expansível */}
+              <div>
+                <button
+                  type="button"
+                  className={`group relative flex items-center h-12 w-full font-medium transition-all duration-200 ${pathname.startsWith('/Dashboard') ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                  onClick={() => setDashboardOpen((open) => !open)}
+                  aria-expanded={dashboardOpen}
+                  aria-controls="dashboard-submenu"
+                  aria-label="Dashboard"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  {!isCollapsed && <span className="ml-4 font-medium text-base">Dashboard</span>}
+                  {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Dashboard</span>}
+                  {!isCollapsed && <svg className={`w-4 h-4 ml-auto transition-transform ${dashboardOpen ? "rotate-90" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                {/* Submenu Dashboard - bloco normal, não absoluto */}
+                {dashboardOpen && (
+                  <div id="dashboard-submenu" className="ml-8 mt-1 flex flex-col gap-1">
+                    <Link href="/Dashboard/financeiro" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/financeiro' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Financeiro">Financeiro</Link>
+                    <Link href="/Dashboard/atencion" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/atencion' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Atención">Atención</Link>
+                    <Link href="/Dashboard/marketing" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/marketing' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Marketing">Marketing</Link>
+                    <Link href="/Dashboard/experiencia" className={`block px-2 py-1 rounded ${pathname === '/Dashboard/experiencia' ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold' : 'text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'}`} aria-label="Experiencia del Cliente">Experiencia del Cliente</Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Pacientes */}
+              <Link href="/Pacientes" className={`group relative flex items-center h-12 w-full ${pathname === '/Pacientes' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Pacientes">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
-              </div>
-              <span className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Pacientes</span>
-              
-              {/* Etiqueta para sidebar retraída */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-blue-700 dark:bg-blue-600 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-blue-600 dark:border-blue-500 z-50">
-                  Pacientes
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-blue-700 dark:border-r-blue-600"></div>
-                </div>
-              )}
-            </a>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Pacientes</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Pacientes</span>}
+              </Link>
 
-            {/* Leads */}
-            <a href="#" className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md ${isCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+              {/* Doctores */}
+              <Link href="/Doctores" className={`group relative flex items-center h-12 w-full ${pathname === '/Doctores' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`} aria-label="Doctores">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14c3.866 0 7-1.343 7-3V7a7 7 0 10-14 0v4c0 1.657 3.134 3 7 3zm0 0v4m-4 0h8" />
                 </svg>
-              </div>
-              <span className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Leads</span>
-              
-              {/* Etiqueta para sidebar retraída */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-purple-600 dark:bg-purple-500 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-purple-500 dark:border-purple-400 z-50">
-                  Leads
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-purple-600 dark:border-r-purple-500"></div>
-                </div>
-              )}
-            </a>
-          </div>
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Doctores</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Doctores</span>}
+              </Link>
+            </div>
 
-          <div className="space-y-1 pt-4">
-            <h3 className={`text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3 transition-all duration-300 ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
-              Sistema
-            </h3>
-            
-            {/* Configurações */}
-            <a href="#" className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-300 font-medium transition-all duration-200 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-md ${isCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-5 h-5 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <span className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>Configurações</span>
+            <div className="space-y-1 pt-4">
+              <h3 className={`text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 mb-3 transition-all duration-300 ${isCollapsed ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 h-auto'}`}>
+                Sistema
+              </h3>
               
-              {/* Etiqueta para sidebar retraída */}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-amber-600 dark:bg-amber-500 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-amber-500 dark:border-amber-400 z-50">
-                  Configurações
-                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-amber-600 dark:border-r-amber-500"></div>
-                </div>
-              )}
-            </a>
-          </div>
-        </nav>
+              {/* Configuraciones */}
+              <Link
+                href="/Configuraciones"
+                className={`group relative flex items-center h-12 w-full ${pathname === '/Configuraciones' ? 'bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg text-white' : 'text-slate-600 dark:text-slate-300'} ${isCollapsed ? 'justify-center w-12 px-0' : 'justify-start px-4'}`}
+                aria-label="Configuraciones"
+              >
+                <Cog className="w-5 h-5" />
+                {!isCollapsed && <span className="ml-4 font-medium text-base">Configuraciones</span>}
+                {isCollapsed && <span className="absolute left-[60px] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-200 text-slate-700 dark:text-white rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 shadow-lg">Configuraciones</span>}
+              </Link>
+            </div>
+          </nav>
+        </div>
 
-        {/* Toggle Moderno - Posicionado acima do perfil do usuário */}
+        {/* Botão Retrair fixo no rodapé */}
         <div className="px-4 pb-2">
           <button
-            onClick={onToggle}
+            onClick={handleToggle}
             className={`
               w-full h-10 rounded-xl transition-all duration-500 ease-in-out
               ${isCollapsed 
@@ -273,7 +430,7 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
               
               {/* Texto - só aparece quando expandido */}
               <span className={`font-medium transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'} ${isCollapsed ? 'text-white' : 'text-slate-600 dark:text-slate-300'}`}>
-                {isCollapsed ? "Expandir" : "Retrair"}
+                {isCollapsed ? "Expandir" : "Retraer"}
               </span>
             </div>
           </button>

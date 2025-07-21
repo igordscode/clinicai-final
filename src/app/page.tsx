@@ -1,5 +1,6 @@
-  "use client";
-
+"use client";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { useState, useRef, useEffect } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
@@ -14,8 +15,10 @@ import { useToast } from "../components/Toast";
 import { ToastDemo } from "../components/Toast";
 import { KpiCardSkeleton, ChartCardSkeleton } from "../components/Skeleton";
 import {
-  UserPlus, CalendarPlus, DollarSign, Megaphone, FileText, Folder, Activity, Star, BadgeDollarSign, CheckCircle, ArrowUpRight, ArrowLeftRight, ArrowDownRight, TrendingDown, CreditCard, BarChart2, Smile, MessageCircle, RefreshCcw, Share2, Target, TrendingUp, Users, Stethoscope, Lightbulb, Eye, MoreVertical, Gift, Bell, AlertTriangle, Rocket, AlignVerticalDistributeEnd, Settings, Clock, Building2
+  UserPlus, CalendarPlus, DollarSign, Megaphone, FileText, Folder, Activity, Star, BadgeDollarSign, CheckCircle, ArrowUpRight, ArrowLeftRight, ArrowDownRight, TrendingDown, CreditCard, BarChart2, Smile, MessageCircle, RefreshCcw, Share2, Target, TrendingUp, Users, Stethoscope, Lightbulb, Eye, MoreVertical, Gift, Bell, AlertTriangle, Rocket, AlignVerticalDistributeEnd, Settings, Clock, Building2, Calendar
 } from 'lucide-react';
+import Link from "next/link";
+import { StatusButton } from "../components/ui/StatusButton";
 
 export default function Dashboard() {
   const [robotSmiling, setRobotSmiling] = useState(false);
@@ -26,6 +29,7 @@ export default function Dashboard() {
   const robotRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [currentHour, setCurrentHour] = useState<string>("");
 
   // Função para obter saudação baseada no horário
   const getGreeting = () => {
@@ -141,22 +145,26 @@ export default function Dashboard() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const updateHour = () => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      setCurrentHour(`${hours}:${minutes}`);
+    };
+    updateHour();
+    const interval = setInterval(updateHour, 1000 * 30); // Atualiza a cada 30s
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="font-sans antialiased bg-background flex w-full">
-      {/* Sidebar Fixa/Drawer */}
-      <Sidebar 
-        userName="Camila" 
-        isCollapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      />
+    <div className="font-sans antialiased bg-background flex w-full h-screen">
+      
       {/* Main Content */}
-      <div className="flex flex-col flex-1 w-full">
-        {/* Header */}
-        <Header userName="Camila" notifications={3} onMenuClick={() => setSidebarOpen(true)} />
+      <div className="flex flex-col flex-1 w-full min-h-0">
+        
         {/* Main Area com scroll independente */}
-        <main className="flex-1 px-4 md:px-6 lg:px-8 py-4 md:py-6 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900/30 overflow-y-auto scrollbar-thin">
+        <main className="flex-1 px-4 md:px-6 lg:px-8 py-4 md:py-6 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900/30 overflow-y-auto scrollbar-thin h-full">
           
           {/* Welcome Banner - VERSÃO ULTRA COMPACTADA */}
           <section className="relative mb-3 md:mb-4 overflow-hidden">
@@ -350,47 +358,27 @@ export default function Dashboard() {
               </div>
 
               {/* Middle Row - Status Indicators */}
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                {/* Clínica Operacional */}
-                <div className="flex items-center gap-2 p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700/50">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <div className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Sistema Online</div>
-                    <div className="text-xs text-emerald-600 dark:text-emerald-400">99.9% uptime</div>
-                  </div>
+              <div className="flex flex-row gap-2 mb-2">
+                {/* Sistema Online */}
+                <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-lg px-2 py-1 min-w-[40px] w-fit">
+                  <StatusButton status="online" tooltip="Sistema Online" />
                 </div>
-                {/* Horário */}
-                <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700/50">
-                  <svg className="w-3 h-3 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <div>
-                    <div className="text-xs font-semibold text-blue-700 dark:text-blue-300">Última actualización</div>
-                    <div className="text-xs text-blue-600 dark:text-blue-400">hace 2 min</div>
-                  </div>
+                {/* Clínica Operacional */}
+                <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg px-2 py-1 min-w-[40px] w-fit">
+                  <StatusButton status="clinica" tooltip="Clínica Operacional" />
+                </div>
+                {/* Horario */}
+                <div className="flex items-center gap-2 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg px-2 py-1 min-w-[40px] w-fit">
+
+                  <span className="text-[13px] text-purple-300 dark:text-purple-200 font-semibold leading-tight">{currentHour}</span>
+                </div>
+                {/* Ultima actualizacion */}
+                <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg px-2 py-1 min-w-[40px] w-fit">
+                  <span className="text-[13px] text-blue-300 dark:text-blue-200 font-semibold leading-tight">2m</span>  
+                  <RefreshCcw className="w-3 h-3 text-blue-300 dark:text-blue-200" tooltip='Ultima actualización' />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-4">
-                {/* Última Actualización */}
-                <div className="flex items-center gap-2 p-2 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-700/50">
-                  <div className="w-3 h-3 bg-purple-500 rounded-full flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-purple-700 dark:text-purple-300">Clínica Operacional</div>
-                    <div className="text-xs text-purple-600 dark:text-purple-400">Horario normal</div>
-                  </div>
-                </div>
-                {/* Horário */}
-                <div className="flex items-center gap-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-700/50">
-                  <svg className="w-3 h-3 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <div>
-                    <div className="text-xs font-semibold text-amber-700 dark:text-amber-300">Horario</div>
-                    <div className="text-xs text-amber-600 dark:text-amber-400">8:00 - 18:00</div>
-                  </div>
-                </div>
               </div>
 
               {/* Bottom Row - Main Content Grid - REORGANIZADO */}
@@ -466,26 +454,24 @@ export default function Dashboard() {
                 {/* Center - Métricas e Finanças Agrupadas */}
                 <div className="space-y-2 md:space-y-3">
                   {/* KPIs Principais - VERSÃO ULTRA COMPACTA */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     {/* Citas Hoy */}
-                    <div className="flex gap-4 overflow-x-auto pb-2 mb-4">
-  <div className="min-w-[140px] bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
-    <div className="text-emerald-700 font-bold text-xl">6</div>
-    <div className="text-xs text-emerald-600">Citas Hoy</div>
-  </div>
+                    <div className="group relative bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-emerald-600/10 dark:from-emerald-400/20 dark:via-emerald-500/10 dark:to-emerald-600/20 border border-emerald-200/50 dark:border-emerald-500/30 rounded-lg p-3 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-emerald-700 dark:text-emerald-300 font-bold text-xl">6</div>
+                      <div className="text-xs text-emerald-600 dark:text-emerald-400">Citas Hoy</div>
+                    </div>
 
                     {/* En Espera */}
-                    <div className="min-w-[140px] bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
-    <div className="text-amber-700 font-bold text-xl">8</div>
-    <div className="text-xs text-amber-600">En Espera</div>
-  </div>
+                    <div className="group relative bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-amber-600/10 dark:from-amber-400/20 dark:via-amber-500/10 dark:to-amber-600/20 border border-amber-200/50 dark:border-amber-500/30 rounded-lg p-3 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-amber-700 dark:text-amber-300 font-bold text-xl">8</div>
+                      <div className="text-xs text-amber-600 dark:text-amber-400">En Espera</div>
+                    </div>
 
                     {/* Urgencias */}
-                    <div className="min-w-[140px] bg-red-50 border border-red-200 rounded-lg p-3 text-center">
-    <div className="text-red-700 font-bold text-xl">2</div>
-    <div className="text-xs text-red-600">Urgencias</div>
-  </div>
-</div>
+                    <div className="group relative bg-gradient-to-br from-red-500/10 via-red-400/5 to-red-600/10 dark:from-red-400/20 dark:via-red-500/10 dark:to-red-600/20 border border-red-200/50 dark:border-red-500/30 rounded-lg p-3 text-center overflow-hidden hover:scale-105 transition-all duration-300 hover:shadow-lg">
+                      <div className="text-red-700 dark:text-red-300 font-bold text-xl">2</div>
+                      <div className="text-xs text-red-600 dark:text-red-400">Urgencias</div>
+                    </div>
                   </div>
 
                   {/* Finanzas del Día */}

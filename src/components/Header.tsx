@@ -1,5 +1,36 @@
+"use client";
 import React from "react";
 import ThemeToggle from "./ThemeToggle";
+import { usePathname } from 'next/navigation';
+import { BarChart2, Calendar, MessageCircle, CreditCard, Briefcase, Users, RefreshCcw, Star, Megaphone, DollarSign, Stethoscope, Target, Smile, User, UserCheck, Cog } from 'lucide-react';
+
+type HeaderConfig = {
+  [key: string]: {
+    title: string;
+    subtitle: string;
+    icon: React.ComponentType<any>;
+  };
+};
+
+const headerConfig: HeaderConfig = {
+  '/': { title: 'Inicio', subtitle: 'Página principal do sistema', icon: BarChart2 },
+  '/Dashboard': { title: 'Dashboard', subtitle: 'Visión general de la clínica', icon: BarChart2 },
+  '/Dashboard/financeiro': { title: 'Dashboard', subtitle: 'Visión general de la clínica', icon: BarChart2 },
+  '/Dashboard/atencion': { title: 'Dashboard', subtitle: 'Visión general de la clínica', icon: BarChart2 },
+  '/Dashboard/marketing': { title: 'Dashboard', subtitle: 'Visión general de la clínica', icon: BarChart2 },
+  '/Dashboard/experiencia': { title: 'Dashboard', subtitle: 'Visión general de la clínica', icon: BarChart2 },
+  '/Agenda': { title: 'Agenda', subtitle: 'Gestione y visualice los agendamientos de la clínica', icon: Calendar },
+  '/Chat': { title: 'Chat', subtitle: 'Comunicación en tiempo real con pacientes y equipo', icon: MessageCircle },
+  '/CRM': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/CRM/comercial': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/CRM/pacientes': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/CRM/remarketing': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/CRM/feedback': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/CRM/campanhas': { title: 'CRM', subtitle: 'Relación y seguimiento de clientes', icon: CreditCard },
+  '/Pacientes': { title: 'Pacientes', subtitle: 'Lista y gestión de pacientes', icon: User },
+  '/Doctores': { title: 'Doctores', subtitle: 'Lista y gestión de profesionales', icon: UserCheck },
+  '/Configuraciones': { title: 'Configuraciones', subtitle: 'Preferencias y ajustes de la plataforma', icon: Cog },
+};
 
 interface HeaderProps {
   userName?: string;
@@ -8,6 +39,10 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ userName = "Camila", notifications = 3, onMenuClick }) => {
+  const pathname = usePathname();
+  const config = headerConfig[pathname] || headerConfig['/' + pathname.split('/')[1]] || headerConfig['/'];
+  const Icon = config.icon;
+
   return (
     <header className="h-20 flex items-center justify-between px-6 md:px-8 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-lg sticky top-0 z-20 relative overflow-hidden">
       {/* Background decoration */}
@@ -31,20 +66,18 @@ export const Header: React.FC<HeaderProps> = ({ userName = "Camila", notificatio
             <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-600 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden transform hover:rotate-1 transition-transform duration-300">
               {/* Efeito 3D - Sombra interna */}
               <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
-              {/* Conteúdo */}
+              {/* Ícone dinâmico */}
               <div className="relative z-10">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
+                <Icon className="w-6 h-6 text-white" />
               </div>
               {/* Brilho 3D */}
               <div className="absolute top-1 left-1 w-2 h-2 bg-white/40 rounded-full blur-sm"></div>
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-                DASHBOARD
+                {config.title}
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Visão Geral da Clínica</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{config.subtitle}</p>
             </div>
           </div>
         </div>
