@@ -1,4 +1,4 @@
-wwimport { MessageCircle } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 export default function ChatPage() {
   return (

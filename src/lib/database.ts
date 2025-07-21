@@ -1,7 +1,7 @@
 import { Pool } from 'pg';
 
 // Configuração da conexão com o banco de dados
-const pool = new Pool({
+export const pool = new Pool({
   user: 'clinicai_user',
   host: process.env.NODE_ENV === 'production' ? 'postgres' : 'localhost',
   database: 'clinicai_db',
