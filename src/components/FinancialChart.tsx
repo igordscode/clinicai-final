@@ -25,8 +25,8 @@ const data = {
       label: 'Facturación',
       data: [120, 180, 160, 220, 200, 240],
       borderColor: 'linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%)', // será sobrescrito via plugin
-      backgroundColor: (context: any) => {
-        const ctx = context.chart.ctx;
+      backgroundColor: (context: unknown) => {
+        const ctx = (context as any).chart.ctx;
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
         gradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
@@ -45,8 +45,8 @@ const data = {
       label: 'Gastos',
       data: [140, 130, 120, 110, 100, 90],
       borderColor: 'linear-gradient(90deg, #ef4444 0%, #dc2626 100%)', // será sobrescrito via plugin
-      backgroundColor: (context: any) => {
-        const ctx = context.chart.ctx;
+      backgroundColor: (context: unknown) => {
+        const ctx = (context as any).chart.ctx;
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, 'rgba(239, 68, 68, 0.2)');
         gradient.addColorStop(1, 'rgba(239, 68, 68, 0.05)');
@@ -84,8 +84,8 @@ const options = {
       cornerRadius: 8,
       displayColors: true,
       callbacks: {
-        label: function(context: any) {
-          return `${context.dataset.label}: Gs. ${context.parsed.y}M`;
+        label: function(context: unknown) {
+          return `${(context as any).dataset.label}: Gs. ${(context as any).parsed.y}M`;
         },
       },
     },
@@ -116,8 +116,8 @@ const options = {
         },
         stepSize: 40,
         beginAtZero: true,
-        callback: function(value: any) {
-          return `Gs. ${value}M`;
+        callback: function(value: unknown) {
+          return `Gs. ${(value as any)}M`;
         },
       },
       min: 0,

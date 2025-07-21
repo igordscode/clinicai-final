@@ -57,7 +57,7 @@ const options = {
       cornerRadius: 8,
       displayColors: true,
       callbacks: {
-        label: function(context: any) {
+        label: function(context: unknown) {
           return `${context.dataset.label}: ${context.parsed.y}`;
         },
       },

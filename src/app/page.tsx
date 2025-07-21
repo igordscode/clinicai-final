@@ -375,7 +375,7 @@ export default function Dashboard() {
                 {/* Ultima actualizacion */}
                 <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-lg px-2 py-1 min-w-[40px] w-fit">
                   <span className="text-[13px] text-blue-300 dark:text-blue-200 font-semibold leading-tight">2m</span>  
-                  <RefreshCcw className="w-3 h-3 text-blue-300 dark:text-blue-200" tooltip='Ultima actualización' />
+                  <RefreshCcw className="w-3 h-3 text-blue-300 dark:text-blue-200"  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-4">

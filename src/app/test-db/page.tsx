@@ -3,9 +3,9 @@
 import { useState } from 'react';
 
 export default function TestDatabase() {
-  const [testResult, setTestResult] = useState<any>(null);
+  const [testResult, setTestResult] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
-  const [seedResult, setSeedResult] = useState<any>(null);
+  const [seedResult, setSeedResult] = useState<unknown>(null);
 
   const testConnection = async () => {
     setLoading(true);

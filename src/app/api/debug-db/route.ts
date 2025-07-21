@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
+import { exec } from 'child_process';
+import util from 'util';
 
 export async function GET() {
   try {
     console.log('🔍 Debugando conexão com banco...');
     
-    // Teste 1: Verificar se conseguimos conectar com postgres (superusuário)
-    const { exec } = require('child_process');
-    const util = require('util');
     const execAsync = util.promisify(exec);
     
     try {
