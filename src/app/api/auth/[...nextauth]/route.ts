@@ -7,7 +7,7 @@ import pool from "@/lib/database";
 import bcrypt from "bcryptjs";
 
 // Exportamos a configuração para melhor organização
-export const authOptions: NextAuthOptions = {
+ const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
