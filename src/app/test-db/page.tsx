@@ -2,10 +2,43 @@
 
 import { useState } from 'react';
 
+type TestResult = {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: {
+    connection: {
+      dbVersion: string;
+      currentTime: string;
+    };
+    tables: string[];
+    counts: {
+      users: number;
+      doctors: number;
+      patients: number;
+      appointments: number;
+      rooms: number;
+      financial_metrics: number;
+    };
+  };
+};
+
+type SeedResult = {
+  success: boolean;
+  message?: string;
+  error?: string;
+  data?: {
+    patientsInserted?: number;
+    appointmentsCreated?: number;
+    doctorsOnline?: number;
+    roomsOccupied?: number;
+  };
+};
+
 export default function TestDatabase() {
-  const [testResult, setTestResult] = useState<unknown>(null);
+  const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [seedResult, setSeedResult] = useState<unknown>(null);
+  const [seedResult, setSeedResult] = useState<SeedResult | null>(null);
 
   const testConnection = async () => {
     setLoading(true);
@@ -56,22 +89,29 @@ export default function TestDatabase() {
                   {testResult.success ? '✅ Sucesso!' : '❌ Erro!'}
                 </div>
                 <div className="text-sm text-gray-600 mt-2">
-                  {testResult.message || testResult.error}
+                  {testResult.message || testResult.error || ''}
                 </div>
                 {testResult.data && (
                   <div className="mt-4 text-sm">
-                    <div><strong>Banco:</strong> {testResult.data.connection.dbVersion}</div>
-                    <div><strong>Horário:</strong> {new Date(testResult.data.connection.currentTime).toLocaleString()}</div>
-                    <div><strong>Tabelas:</strong> {testResult.data.tables.join(', ')}</div>
+                    <div><strong>Banco:</strong> {testResult.data.connection?.dbVersion || '-'}</div>
+                    <div>
+                      <strong>Horário:</strong>{' '}
+                      {testResult.data.connection?.currentTime
+                        ? new Date(testResult.data.connection.currentTime).toLocaleString()
+                        : '-'}
+                    </div>
+                    <div>
+                      <strong>Tabelas:</strong> {testResult.data.tables?.join(', ') || '-'}
+                    </div>
                     <div className="mt-2">
                       <strong>Registros:</strong>
                       <ul className="ml-4">
-                        <li>Usuários: {testResult.data.counts.users}</li>
-                        <li>Médicos: {testResult.data.counts.doctors}</li>
-                        <li>Pacientes: {testResult.data.counts.patients}</li>
-                        <li>Consultas: {testResult.data.counts.appointments}</li>
-                        <li>Salas: {testResult.data.counts.rooms}</li>
-                        <li>Métricas: {testResult.data.counts.financial_metrics}</li>
+                        <li>Usuários: {testResult.data.counts?.users ?? '-'}</li>
+                        <li>Médicos: {testResult.data.counts?.doctors ?? '-'}</li>
+                        <li>Pacientes: {testResult.data.counts?.patients ?? '-'}</li>
+                        <li>Consultas: {testResult.data.counts?.appointments ?? '-'}</li>
+                        <li>Salas: {testResult.data.counts?.rooms ?? '-'}</li>
+                        <li>Métricas: {testResult.data.counts?.financial_metrics ?? '-'}</li>
                       </ul>
                     </div>
                   </div>
@@ -97,14 +137,14 @@ export default function TestDatabase() {
                   {seedResult.success ? '✅ Sucesso!' : '❌ Erro!'}
                 </div>
                 <div className="text-sm text-gray-600 mt-2">
-                  {seedResult.message || seedResult.error}
+                  {seedResult.message || seedResult.error || ''}
                 </div>
                 {seedResult.data && (
                   <div className="mt-4 text-sm">
-                    <div>Pacientes inseridos: {seedResult.data.patientsInserted}</div>
-                    <div>Consultas criadas: {seedResult.data.appointmentsCreated}</div>
-                    <div>Médicos online: {seedResult.data.doctorsOnline}</div>
-                    <div>Salas ocupadas: {seedResult.data.roomsOccupied}</div>
+                    <div>Pacientes inseridos: {seedResult.data.patientsInserted ?? '-'}</div>
+                    <div>Consultas criadas: {seedResult.data.appointmentsCreated ?? '-'}</div>
+                    <div>Médicos online: {seedResult.data.doctorsOnline ?? '-'}</div>
+                    <div>Salas ocupadas: {seedResult.data.roomsOccupied ?? '-'}</div>
                   </div>
                 )}
               </div>
