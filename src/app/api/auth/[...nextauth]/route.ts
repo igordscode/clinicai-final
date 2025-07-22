@@ -34,7 +34,11 @@ import bcrypt from "bcryptjs";
         const client = await pool.connect();
         try {
           // Busca o usuário no banco de dados
-          const res = await client.query('SELECT * FROM users WHERE email = $1', [credentials.email]);
+          // Nós selecionamos as colunas explicitamente e renomeamos password_hash para password
+const res = await client.query(
+  'SELECT id, name, email, password_hash AS password FROM users WHERE email = $1',
+  [credentials.email]
+);
           const user = res.rows[0];
           
           client.release();
