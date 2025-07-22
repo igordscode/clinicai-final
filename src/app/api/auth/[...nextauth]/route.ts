@@ -1,92 +1,92 @@
-// Arquivo: src/app/api/auth/[...nextauth]/route.ts
-import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import pool from '@/lib/database'; // Importa sua conexão com o banco
-import bcrypt from 'bcryptjs'; // Precisaremos do bcrypt para senhas
+// ARQUIVO: src/app/api/auth/[...nextauth]/route.ts
 
-const handler = NextAuth({
+import NextAuth, { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
+import pool from "@/lib/database";
+import bcrypt from "bcryptjs";
+
+// Exportamos a configuração para melhor organização
+export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-    // Este é o provedor para login com email e senha
     CredentialsProvider({
-      name: 'Credentials',
+      // O nome para usar quando chamar a função signIn()
+      name: "credentials",
+      // O objeto `credentials` define os campos que esperamos no formulário
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
-      // Esta é a lógica que será executada quando alguém tentar fazer login
+      // A lógica de autorização agora vive aqui
       async authorize(credentials) {
-        console.log('--- Tentativa de Login ---');
-        console.log('Credenciais recebidas:', credentials); // Veja o que está chegando do formulário
+        // Log para ver se esta função está sendo chamada
+        console.log("🕵️‍♂️ -> Dentro da função 'authorize' agora!");
 
-        if (!credentials?.email || !credentials.password) {
-          console.log('Email ou senha não fornecidos.');
-          return null;
+        // Validação básica: se não houver email ou senha, falha.
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email e senha são obrigatórios");
         }
 
         const client = await pool.connect();
         try {
-          console.log(`Buscando usuário com email: ${credentials.email}`);
-          // Procura o usuário no banco de dados pelo email
+          // Busca o usuário no banco de dados
           const res = await client.query('SELECT * FROM users WHERE email = $1', [credentials.email]);
           const user = res.rows[0];
-
-          // **PONTO DE INVESTIGAÇÃO 1**
-          if (!user) {
-            console.log('Usuário não encontrado no banco de dados.');
-            client.release();
-            return null;
-          }
           
-          console.log('Usuário encontrado:', user);
-          console.log('Senha do formulário:', credentials.password);
-          console.log('Hash da senha no banco:', user.password); // Veja o hash salvo
+          client.release();
 
-          // **PONTO DE INVESTIGAÇÃO 2**
-          // Compara a senha do formulário com o hash do banco
-          const isPasswordCorrect = await bcrypt.compare(
-            credentials.password, // Senha original
-            user.password       // Hash que está no banco
+          // Se não encontrou o usuário, falha.
+          if (!user) {
+            console.log("Usuário não encontrado.");
+            throw new Error("Credenciais inválidas");
+          }
+
+          // Compara a senha digitada com o hash salvo no banco
+          const passwordsMatch = await bcrypt.compare(
+            credentials.password,
+            user.password
           );
 
-          console.log('A senha está correta? (bcrypt.compare):', isPasswordCorrect);
-
-          if (isPasswordCorrect) {
-            console.log('✅ LOGIN BEM-SUCEDIDO. Retornando usuário.');
-            client.release();
-            // Retorna os dados para a sessão
-            return { id: user.id, email: user.email, name: user.name };
-          } else {
-            console.log('❌ SENHA INCORRETA.');
-            client.release();
-            return null;
+          // Se as senhas não baterem, falha.
+          if (!passwordsMatch) {
+            console.log("Senha incorreta.");
+            throw new Error("Credenciais inválidas");
           }
-          
-        } catch (error) {
-          console.error('ERRO NO PROCESSO DE AUTORIZAÇÃO:', error);
-          client.release();
-          return null;
-        }
-      }
-    })
-  ],
-  pages: {
-    signIn: '/login', // Diz ao NextAuth que sua página de login customizada está em /login
-  },
-  session: {
-    strategy: 'jwt', // Usa JSON Web Tokens para gerenciar a sessão
-  },
-  secret: process.env.NEXTAUTH_SECRET, // Lê o segredo da sua variável de ambiente
-  callbacks: {
-    async redirect({ url, baseUrl }) {
-      // Sempre redireciona para a página inicial após login
-      return baseUrl;
-    },
-  },
-});
 
+          console.log("✅ LOGIN BEM-SUCEDIDO! Retornando o usuário.");
+          // Se tudo deu certo, retorna o objeto do usuário.
+          // O NextAuth usará isso para criar a sessão/token.
+          return user;
+        } catch (error) {
+          console.error("Erro no 'authorize':", error);
+          // Libera o cliente em caso de erro também
+          client.release();
+          // Lança o erro para o NextAuth tratar
+          throw new Error("Erro interno do servidor");
+        }
+      },
+    }),
+  ],
+  // Define a página de login customizada
+  pages: {
+    signIn: "/login",
+  },
+  // Estratégia de sessão
+  session: {
+    strategy: "jwt",
+  },
+  // Segredo para assinar os tokens
+  secret: process.env.NEXTAUTH_SECRET,
+  // Debug mode para ambiente de desenvolvimento te dará mais logs
+  debug: process.env.NODE_ENV === "development",
+};
+
+// Cria o handler do NextAuth com a configuração exportada
+const handler = NextAuth(authOptions);
+
+// Exporta o handler para os métodos GET e POST
 export { handler as GET, handler as POST };
