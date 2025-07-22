@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 
 type Theme = "light" | "dark" | "system";
 
-export default function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string;
+  iconClassName?: string;
+};
+
+export default function ThemeToggle({ className = "", iconClassName = "" }: ThemeToggleProps) {
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
