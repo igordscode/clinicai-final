@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
   try {
-    const { name, email, password } from await request.json();
+const { name, email, password } = await request.json();
 
     // Validação básica
     if (!name || !email || !password) {
