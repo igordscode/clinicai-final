@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  TooltipItem,
 } from 'chart.js';
 import React from 'react';
 
@@ -57,7 +58,7 @@ const options = {
       cornerRadius: 8,
       displayColors: true,
       callbacks: {
-        label: function(context: unknown) {
+        label: function(context: TooltipItem<'bar'>) {
           return `${context.dataset.label}: ${context.parsed.y}`;
         },
       },

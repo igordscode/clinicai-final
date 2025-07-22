@@ -72,6 +72,7 @@ export default function ThemeToggle({ className = "", iconClassName = "" }: Them
           }
           hover:scale-105 transform hover:-translate-y-0.5
           focus:outline-none focus:ring-4 focus:ring-blue-500/20
+          ${className}
         `}
         aria-label={`Mudar para tema ${isDark ? "claro" : "escuro"}`}
       >
@@ -92,6 +93,7 @@ export default function ThemeToggle({ className = "", iconClassName = "" }: Them
               w-3 h-3 transition-all duration-500 ease-in-out
               ${isDark ? "opacity-0 scale-0 rotate-180" : "opacity-100 scale-100 rotate-0"}
               text-amber-600
+              ${iconClassName}
             `}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -109,6 +111,7 @@ export default function ThemeToggle({ className = "", iconClassName = "" }: Them
               absolute w-3 h-3 transition-all duration-500 ease-in-out
               ${isDark ? "opacity-100 scale-100 rotate-0" : "opacity-0 scale-0 -rotate-180"}
               text-slate-600
+              ${iconClassName}
             `}
             fill="currentColor"
             viewBox="0 0 20 20"
@@ -128,8 +131,6 @@ export default function ThemeToggle({ className = "", iconClassName = "" }: Them
           `}
         />
       </button>
-
-
     </div>
   );
 } 
