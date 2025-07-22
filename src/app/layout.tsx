@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "../components/Toast";
-import { SidebarWithState } from "../components/SidebarWithState";
-import { Header } from "../components/Header";
+import ClientWrapper from "./ClientWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,13 +27,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ToastProvider>
-          <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900/30 flex w-full h-screen">
-            <SidebarWithState />
-            <div className="flex flex-col flex-1 w-full min-h-0">
-              <Header />
-              <main className="flex-1 overflow-y-auto">{children}</main>
-            </div>
-          </div>
+          <ClientWrapper>{children}</ClientWrapper>
         </ToastProvider>
       </body>
     </html>
