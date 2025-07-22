@@ -1,36 +1,30 @@
-// Arquivo: src/app/register/success/page.tsx
+// ARQUIVO FINAL E CORRIGIDO: src/app/(auth)/register/success/page.tsx
+
 'use client';
 
-// Importações necessárias
-import { useRouter, useSearchParams } from 'next/navigation'; // Trocamos usePathname por useSearchParams
-import { signIn } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import React from 'react'; // Adicionando React para clareza
+// Suas importações, agora com Suspense
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import React from 'react';
+import Link from 'next/link';
 
-// Hook customizado para evitar renderização no servidor onde window não existe
-function useEmailFromUrl() {
-  const searchParams = useSearchParams();
-  const email = searchParams.get('email');
-  return email;
-}
-
-export default function RegistrationSuccessPage() {
+// =========================================================================
+// O conteúdo da sua página agora vive em um componente separado
+// =========================================================================
+function SuccessContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   
-  // A única informação que precisamos da URL é o email
-  const email = useEmailFromUrl(); 
+  const email = searchParams.get('email');
 
-  // Não vamos mais tentar fazer login automático, pois não temos a senha de forma segura.
-  // A melhor prática é redirecionar o usuário para a página de login para que ele mesmo a insira.
   const handleGoToLogin = () => {
     setLoading(true);
-    // Simplesmente redireciona para a página de login
     router.push('/login');
   };
 
   return (
-    // Seu design está ótimo, vamos mantê-lo!
+    // Seu design impecável, sem alterações
     <div className="flex items-center justify-center min-h-screen bg-slate-100 dark:bg-slate-950">
       <div className="w-full max-w-md mx-auto p-8 flex flex-col items-center gap-6 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl">
         <div className="flex flex-col items-center gap-2 mb-2">
@@ -63,5 +57,17 @@ export default function RegistrationSuccessPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+// =========================================================================
+// O componente principal da página, que exportamos como default
+// =========================================================================
+export default function RegistrationSuccessPage() {
+  return (
+    // Ele "envelopa" o conteúdo com a barreira de Suspense
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Carregando...</div>}>
+      <SuccessContent />
+    </Suspense>
   );
 }
