@@ -83,6 +83,7 @@ export default function RegisterForm() {
   const router = useRouter();
   // Toast notification (opcional)
   // const { toast } = useToast();
+  const [registerError, setRegisterError] = useState("");
 
   // Validação etapa 1
   const passwordStrength = getPasswordStrength(password);
@@ -145,12 +146,30 @@ export default function RegisterForm() {
   // Novo: login automático após registro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setRegisterError("");
     if (!isStep1Valid || !isStep2Valid) return;
-    // Aqui você pode chamar a API de registro
-    // Exemplo:
-    // await registerUser({ name, email, password, company, role, area, referral, teamEmails })
-    // Após registro, login automático:
-    router.push("/register/success", { state: { email, password } });
+    // Chama a API de registro
+    const res = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      setRegisterError(data.error || "Erro ao registrar usuário.");
+      return;
+    }
+    // Registro OK, login automático
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result?.ok) {
+      router.push("/");
+    } else {
+      router.push("/login");
+    }
   };
 
   // Wizard steps rendering
@@ -166,6 +185,9 @@ export default function RegisterForm() {
         </h1>
         <span className="text-xs text-slate-500">Healthcare Analytics</span>
       </div>
+      {registerError && (
+        <span className="text-red-500 text-center text-sm mb-2">{registerError}</span>
+      )}
       <form className="w-full flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
         {step === 1 && (
           <>

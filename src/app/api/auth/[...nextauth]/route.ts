@@ -20,28 +20,56 @@ const handler = NextAuth({
       },
       // Esta é a lógica que será executada quando alguém tentar fazer login
       async authorize(credentials) {
+        console.log('--- Tentativa de Login ---');
+        console.log('Credenciais recebidas:', credentials); // Veja o que está chegando do formulário
+
         if (!credentials?.email || !credentials.password) {
+          console.log('Email ou senha não fornecidos.');
           return null;
         }
 
         const client = await pool.connect();
         try {
+          console.log(`Buscando usuário com email: ${credentials.email}`);
           // Procura o usuário no banco de dados pelo email
           const res = await client.query('SELECT * FROM users WHERE email = $1', [credentials.email]);
           const user = res.rows[0];
 
-          if (user) {
-            // Compara a senha digitada com a senha hashada no banco
-            const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
-            
-            if (isPasswordCorrect) {
-              // Se tudo estiver correto, retorna os dados do usuário para a sessão
-              return { id: user.id, email: user.email, name: user.name };
-            }
+          // **PONTO DE INVESTIGAÇÃO 1**
+          if (!user) {
+            console.log('Usuário não encontrado no banco de dados.');
+            client.release();
+            return null;
           }
-          return null; // Retorna null se o usuário não for encontrado ou a senha estiver errada
-        } finally {
+          
+          console.log('Usuário encontrado:', user);
+          console.log('Senha do formulário:', credentials.password);
+          console.log('Hash da senha no banco:', user.password); // Veja o hash salvo
+
+          // **PONTO DE INVESTIGAÇÃO 2**
+          // Compara a senha do formulário com o hash do banco
+          const isPasswordCorrect = await bcrypt.compare(
+            credentials.password, // Senha original
+            user.password       // Hash que está no banco
+          );
+
+          console.log('A senha está correta? (bcrypt.compare):', isPasswordCorrect);
+
+          if (isPasswordCorrect) {
+            console.log('✅ LOGIN BEM-SUCEDIDO. Retornando usuário.');
+            client.release();
+            // Retorna os dados para a sessão
+            return { id: user.id, email: user.email, name: user.name };
+          } else {
+            console.log('❌ SENHA INCORRETA.');
+            client.release();
+            return null;
+          }
+          
+        } catch (error) {
+          console.error('ERRO NO PROCESSO DE AUTORIZAÇÃO:', error);
           client.release();
+          return null;
         }
       }
     })
