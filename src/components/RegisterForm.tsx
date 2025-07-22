@@ -361,8 +361,10 @@ export default function RegisterForm() {
               <button
                 type="button"
                 className="bg-slate-200 text-slate-700 rounded px-4 py-2 font-semibold hover:bg-slate-300 transition"
-                onClick={() => router.push('/register/successemail?email=${encodeURIComponent(email)}')}
-              >
+                // LINHA NOVA (CORRETA)
+                // Nós construímos a URL com o email como um parâmetro de busca
+                onClick={() => router.push(`/register/success?email=${encodeURIComponent(email)}`)}
+                            >
                 Pular
               </button>
               <button
@@ -371,7 +373,7 @@ export default function RegisterForm() {
                 disabled={!isStep3Valid}
               >
                 Convidar e Finalizar
-              </button>
+        </button>
             </div>
           </>
         )}
