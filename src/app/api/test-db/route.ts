@@ -1,3 +1,4 @@
+// CÓDIGO CORRETO PARA O ARQUIVO: src/app/test-db/route.ts
 import { NextResponse } from 'next/server';
 import pool from '../../../lib/database';
 
@@ -5,11 +6,9 @@ export async function GET() {
   try {
     console.log('🔍 Tentando conectar com o banco...');
     
-    // Teste simples primeiro
     const client = await pool.connect();
     console.log('✅ Conexão estabelecida com sucesso!');
     
-    // Testar conexão básica
     const result = await client.query('SELECT NOW() as current_time');
     console.log('✅ Query executada com sucesso!');
     
@@ -36,4 +35,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-} 
+}
