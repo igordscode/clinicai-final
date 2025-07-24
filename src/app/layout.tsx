@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "../components/Toast";
 import ClientWrapper from "./ClientWrapper";
+import SessionWrapper from "./sessionwrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +28,9 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ToastProvider>
-          <ClientWrapper>{children}</ClientWrapper>
+          <SessionWrapper>
+            <ClientWrapper>{children}</ClientWrapper>
+          </SessionWrapper>
         </ToastProvider>
       </body>
     </html>

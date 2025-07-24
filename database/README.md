@@ -122,6 +122,8 @@ netstat -ano | findstr :5432
 
 # Parar o processo ou mudar a porta no docker-compose.yml
 ```
+Stop-Service postgresql*
+
 
 ### Problema: Container não inicia
 ```bash

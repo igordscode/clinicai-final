@@ -21,7 +21,7 @@ export default function LoginPage() {
     });
 
     if (result?.ok) {
-      router.push('/Dashboard');
+      router.push('/');
     } else {
       setError('Email ou senha inválidos.');
     }

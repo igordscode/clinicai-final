@@ -1,0 +1,23 @@
+// Esta é a planta baixa oficial do seu banco de dados.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Lê a URL do seu arquivo .env
+}
+
+// Modelo para a tabela de usuários
+model User {
+  id            String   @id @default(uuid())
+  name          String?
+  email         String   @unique
+  password_hash String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Mapeia este modelo para uma tabela chamada "users" no banco
+  @@map("users")
+}

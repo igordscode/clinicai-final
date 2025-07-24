@@ -86,7 +86,7 @@ const res = await client.query(
   // Segredo para assinar os tokens
   secret: process.env.NEXTAUTH_SECRET,
   // Debug mode para ambiente de desenvolvimento te dará mais logs
-  debug: process.env.NODE_ENV === "development",
+  debug: false, // process.env.NODE_ENV === "development",
 };
 
 // Cria o handler do NextAuth com a configuração exportada

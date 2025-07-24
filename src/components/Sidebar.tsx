@@ -12,8 +12,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Calendar, Cog } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useSession } from "next-auth/react";
 
 export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, isOpen = false, onClose }: SidebarProps) => {
+  const { data: session } = useSession();
+  const displayName = session?.user?.name || userName || "Usuário";
   // Mobile drawer classes
   const mobileDrawer = isOpen
     ? 'fixed inset-0 z-40 flex md:hidden'
@@ -52,12 +55,12 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
           <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-white font-semibold text-sm">{userName.charAt(0).toUpperCase()}</span>
+                <span className="text-white font-semibold text-sm">{displayName.charAt(0).toUpperCase()}</span>
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{userName}</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{displayName}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Administrador</p>
             </div>
           </div>
@@ -442,13 +445,13 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
             <div className="relative">
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md">
                 <span className="text-white font-semibold text-sm">
-                  {userName.charAt(0).toUpperCase()}
+                  {displayName.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div className={`flex-1 min-w-0 transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{userName}</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{displayName}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Administrador</p>
             </div>
             <div className={`w-8 h-8 flex items-center justify-center text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100 w-auto'}`}>
@@ -460,7 +463,7 @@ export const Sidebar = ({ userName = "Camila", isCollapsed = false, onToggle, is
             {/* Etiqueta para sidebar retraída */}
             {isCollapsed && (
               <div className="absolute left-full ml-2 px-2 py-1 bg-emerald-600 dark:bg-emerald-500 text-white text-xs font-medium rounded-md whitespace-nowrap shadow-lg border border-emerald-500 dark:border-emerald-400 z-50">
-                <div className="font-medium">{userName}</div>
+                <div className="font-medium">{displayName}</div>
                 <div className="text-xs opacity-75">Administrador</div>
                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-2 border-b-2 border-r-2 border-transparent border-r-emerald-600 dark:border-r-emerald-500"></div>
               </div>

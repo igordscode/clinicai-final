@@ -3,6 +3,7 @@ import React from "react";
 import ThemeToggle from "./ThemeToggle";
 import { usePathname } from 'next/navigation';
 import { BarChart2, Calendar, MessageCircle, CreditCard, Briefcase, Users, RefreshCcw, Star, Megaphone, DollarSign, Stethoscope, Target, Smile, User, UserCheck, Cog } from 'lucide-react';
+import { useSession } from "next-auth/react";
 
 type HeaderConfig = {
   [key: string]: {
@@ -39,6 +40,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ userName = "Camila", notifications = 3, onMenuClick }) => {
+  const { data: session } = useSession();
+  const displayName = session?.user?.name || userName || "Usuário";
   const pathname = usePathname();
   const config = headerConfig[pathname] || headerConfig['/' + pathname.split('/')[1]] || headerConfig['/'];
   const Icon = config.icon;
@@ -174,7 +177,7 @@ export const Header: React.FC<HeaderProps> = ({ userName = "Camila", notificatio
           {/* Profile */}
           <div className="flex items-center space-x-3">
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{userName}</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{displayName}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400">Administrador</p>
             </div>
             <div className="relative group cursor-pointer">
@@ -184,7 +187,7 @@ export const Header: React.FC<HeaderProps> = ({ userName = "Camila", notificatio
                 {/* Conteúdo */}
                 <div className="relative z-10">
                   <span className="text-white font-semibold text-sm">
-                    {userName.charAt(0).toUpperCase()}
+                    {displayName.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 {/* Brilho 3D */}

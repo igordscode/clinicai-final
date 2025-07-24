@@ -1,7 +1,7 @@
-const { Client } = require('pg');
+import { Client } from 'pg';
 const client = new Client({
   user: 'clinicai_user',
-  host: '127.0.0.1', // ou 'host.docker.internal'
+  host: 'host.docker.internal', // Alterado de 127.0.0.1
   database: 'clinicai_db',
   password: 'clinicai_password',
   port: 5432,

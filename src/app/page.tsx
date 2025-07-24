@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from "next/link";
 import { StatusButton } from "../components/ui/StatusButton";
+import { useSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [robotSmiling, setRobotSmiling] = useState(false);
@@ -30,6 +31,8 @@ export default function Dashboard() {
   const { showToast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentHour, setCurrentHour] = useState<string>("");
+  const { data: session } = useSession();
+  const displayName = session?.user?.name || "Usuário";
 
   // Função para obter saudação baseada no horário
   const getGreeting = () => {
@@ -302,7 +305,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <h1 className="text-lg md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-slate-100 dark:via-indigo-300 dark:to-purple-300 bg-clip-text text-transparent mb-1 flex items-center gap-2">
-                      <span>{getGreeting()}, Camila</span>
+                      <span>{getGreeting()}, {displayName}</span>
                       <span className="text-base md:text-xl lg:text-2xl animate-pulse">{getTimeIcon()}</span>
                     </h1>
                     <p className="text-xs md:text-sm lg:text-base text-slate-600 dark:text-slate-400 font-medium">

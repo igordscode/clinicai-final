@@ -13,7 +13,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init:/docker-entrypoint-initdb.d
+      #- ./database/init:/docker-entrypoint-initdb.d #comentado para não dar erro de permissão  
     networks:
       - clinicai_network
     healthcheck:
@@ -37,6 +37,7 @@ services:
     volumes:
       - pgadmin_data:/var/lib/pgadmin
       - ./database/pgadmin_servers.json:/pgadmin4/servers.json
+    
     networks:
       - clinicai_network
     depends_on:
