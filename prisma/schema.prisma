@@ -20,6 +20,7 @@ model User {
 
   // Relacionamentos
   appointments  Appointment[]
+  treatments    Treatment[]
 
   // Mapeia este modelo para uma tabela chamada "users" no banco
   @@map("users")
@@ -38,6 +39,10 @@ model Patient {
 
   // Relacionamentos
   appointments          Appointment[]
+  treatments            Treatment[]
+  financialTransactions FinancialTransaction[]
+  chatHistory           ChatHistory[]
+  npsFeedback           NpsFeedback[]
 
   @@map("patients")
 }
@@ -59,4 +64,115 @@ model Appointment {
   professional     User     @relation(fields: [professional_id], references: [id])
 
   @@map("appointments")
+}
+
+// Modelo para a tabela de tratamentos
+model Treatment {
+  id               String   @id @default(uuid())
+  patient_id       String
+  professional_id  String
+  treatment_name   String
+  description      String?
+  total_sessions   Int
+  completed_sessions Int    @default(0)
+  price            Decimal
+  status           String   // 'Ativo', 'Pausado', 'Concluído', 'Cancelado'
+  start_date       DateTime
+  end_date         DateTime?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Relacionamentos
+  patient          Patient  @relation(fields: [patient_id], references: [id])
+  professional     User     @relation(fields: [professional_id], references: [id])
+
+  @@map("treatments")
+}
+
+// Modelo para a tabela de transações financeiras
+model FinancialTransaction {
+  id              String   @id @default(uuid())
+  patient_id      String?
+  type            String   // 'Receita', 'Despesa'
+  category        String   // 'Consulta', 'Tratamento', 'Material', etc.
+  description     String
+  amount          Decimal
+  payment_method  String   // 'Dinheiro', 'Cartão', 'PIX', 'Transferência'
+  status          String   // 'Pendente', 'Pago', 'Cancelado'
+  due_date        DateTime?
+  paid_date       DateTime?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relacionamentos
+  patient         Patient? @relation(fields: [patient_id], references: [id])
+
+  @@map("financial_transactions")
+}
+
+// Modelo para a tabela de campanhas de marketing
+model Campaign {
+  id              String   @id @default(uuid())
+  name            String
+  type            String   // 'Instagram', 'Google Ads', 'Email', 'WhatsApp'
+  status          String   // 'Ativa', 'Pausada', 'Finalizada'
+  budget          Decimal?
+  spent_amount    Decimal  @default(0)
+  impressions     Int      @default(0)
+  clicks          Int      @default(0)
+  conversions     Int      @default(0)
+  start_date      DateTime
+  end_date        DateTime?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("campaigns")
+}
+
+// Modelo para a tabela de histórico de chat
+model ChatHistory {
+  id              String   @id @default(uuid())
+  patient_id      String
+  message         String
+  sender_type     String   // 'Patient', 'Bot', 'Human'
+  sender_name     String?
+  timestamp       DateTime @default(now())
+  message_type    String   // 'Text', 'Image', 'Audio', 'Document'
+  metadata        Json?    // Dados extras como anexos, contexto, etc.
+
+  // Relacionamentos
+  patient         Patient  @relation(fields: [patient_id], references: [id])
+
+  @@map("chat_history")
+}
+
+// Modelo para a tabela de feedback NPS
+model NpsFeedback {
+  id              String   @id @default(uuid())
+  patient_id      String
+  score           Int      // 0-10
+  category        String   // 'Promotor', 'Neutro', 'Detrator'
+  comment         String?
+  service_date    DateTime // Data do serviço avaliado
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  // Relacionamentos
+  patient         Patient  @relation(fields: [patient_id], references: [id])
+
+  @@map("nps_feedback")
+}
+
+// Modelo para a tabela de KPIs diários
+model DailyKpi {
+  id                    String   @id @default(uuid())
+  date                  DateTime @unique @db.Date
+  appointments_total    Int      @default(0)
+  appointments_completed Int     @default(0)
+  appointments_cancelled Int     @default(0)
+  revenue_total         Decimal  @default(0)
+  revenue_received      Decimal  @default(0)
+  new_patients          Int      @default(0)
+  nps_average           Decimal? // Média do NPS do dia
+  conversion_rate       Decimal  @default(0) // Taxa de conversão lead -> paciente
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  @@map("daily_kpis")
 }
