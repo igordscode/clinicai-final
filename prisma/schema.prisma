@@ -18,6 +18,45 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Relacionamentos
+  appointments  Appointment[]
+
   // Mapeia este modelo para uma tabela chamada "users" no banco
   @@map("users")
+}
+
+// Modelo para a tabela de pacientes
+model Patient {
+  id                    String   @id @default(uuid())
+  full_name             String
+  phone                 String?
+  email                 String?
+  source                String?  // Canal de aquisição
+  status                String   // 'Lead', 'Ativo', 'Inativo', 'Arquivado'
+  tags                  String[] @default([])
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  // Relacionamentos
+  appointments          Appointment[]
+
+  @@map("patients")
+}
+
+// Modelo para a tabela de agendamentos
+model Appointment {
+  id               String   @id @default(uuid())
+  patient_id       String
+  professional_id  String
+  procedure_name   String
+  start_time       DateTime
+  end_time         DateTime
+  status           String   // 'Agendado', 'Confirmado', 'Cancelado', 'Concluído'
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Relacionamentos
+  patient          Patient  @relation(fields: [patient_id], references: [id])
+  professional     User     @relation(fields: [professional_id], references: [id])
+
+  @@map("appointments")
 }
